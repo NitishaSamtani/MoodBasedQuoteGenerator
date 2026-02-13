@@ -1,0 +1,36 @@
+const Quote = require("../models/Quote");
+
+// Get Random Quote By Mood
+exports.getRandomQuote = async (req, res) => {
+  try {
+    const { mood } = req.params;
+
+    const quotes = await Quote.find({ mood });
+
+    if (quotes.length === 0) {
+      return res.json({ message: "No quotes found" });
+    }
+
+    const random = quotes[Math.floor(Math.random() * quotes.length)];
+
+    res.json(random);
+
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
+
+// Add New Quote
+exports.addQuote = async (req, res) => {
+  try {
+    const { mood, text } = req.body;
+
+    const newQuote = new Quote({ mood, text });
+    await newQuote.save();
+
+    res.json(newQuote);
+
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+};
